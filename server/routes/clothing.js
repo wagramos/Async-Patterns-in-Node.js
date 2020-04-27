@@ -5,13 +5,28 @@ const router = express.Router();
 
 /* GET all clothing */
 router.route('/')
-  .get(function(req, res) {
+  .get(function (req, res) {
 
-    let rawData = fs.readFileSync(datafile, 'utf8');
-    let clothingData = JSON.parse(rawData);
-
-    res.send(clothingData);
-
+    getClothingData((err, data) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log('Returning clothing data');
+      res.send(data);
+    });
+    console.log('Doing more work');
   });
+
+function getClothingData(callback) {
+  fs.readFile(datafile, 'utf8', (err, data) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      const clothingData = JSON.parse(data);
+      callback(null, clothingData);
+    }
+  });
+}
 
 module.exports = router;
