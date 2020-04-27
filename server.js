@@ -15,11 +15,11 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 app.use('/api/clothing', clothing);
 app.use('/api/errors', errors);
-app.get('*', function(req, res) {
+app.get('*', function (req, res) {
   res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3001);
 
 app.listen(app.get('port'));
 

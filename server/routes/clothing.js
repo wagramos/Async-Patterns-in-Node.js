@@ -1,32 +1,52 @@
 const express = require('express');
 const fs = require('fs');
-const datafile = 'server/data/clothing.json';
+const fsPromises = require('fs').promises;
+const datafile = 'server/data/clothing2.json';
 const router = express.Router();
 
 /* GET all clothing */
 router.route('/')
-  .get(function (req, res) {
-
-    getClothingData((err, data) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      console.log('Returning clothing data');
+  .get(async function (req, res) {
+    try {
+      let data = await getClothingData();
+      console.log('Returning async data.');
       res.send(data);
-    });
-    console.log('Doing more work');
+
+    } catch (error) {
+      res.status(500).send(error);
+    }
+
+    //   getClothingData()
+    //     .then(data => {
+    //       console.log('Returning clothing data');
+    //       res.send(data);
+    //     })
+    //     .catch(error => {
+    //       res.status(500).send(error);
+    //     })
+    //     .finally(() => {
+    //       console.log('All work done');
+    //     });
   });
 
-function getClothingData(callback) {
-  fs.readFile(datafile, 'utf8', (err, data) => {
-    if (err) {
-      callback(err, null);
-    } else {
-      const clothingData = JSON.parse(data);
-      callback(null, clothingData);
-    }
-  });
+async function getClothingData() {
+
+  let rawData = await fsPromises.readFile(datafile, 'utf8')
+  let clothingData = JSON.parse(rawData);
+  console.log(clothingData);
+
+  return clothingData;
+  // return new Promise((resolve, reject) => {
+  // fs.readFile(datafile, 'utf8', (err, data) => {
+  //   if (err) {
+  //     reject(err);
+  //   } else {
+  //     const clothingData = JSON.parse(data);
+  //     resolve(clothingData);
+  //   }
+  // });
+
+  // });
 }
 
 module.exports = router;
